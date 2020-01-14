@@ -1,6 +1,6 @@
 Name:		iproute
-Version:	5.2.0
-Release:	2
+Version:	5.4.0
+Release:	1
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -9,21 +9,6 @@ Source0:	https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-%
 BuildRequires:	gcc bison elfutils-libelf-devel flex iptables-devel libcap-devel
 BuildRequires:  libdb-devel libmnl-devel libselinux-devel pkgconfig git
 
-Patch9001:      bugfix-iproute2-3.10.0-fix-maddr-show.patch
-Patch9002:      bugfix-iproute-support-assume-default-route.patch
-
-Patch0001:      0001-Revert-ip6tunnel-fix-ip-6-show-change-dev-name-cmds.patch
-Patch0002:      0002-ip-tunnel-warn-when-changing-IPv6-tunnel-without-tun.patch
-Patch0003:      0003-ip-route-fix-json-formatting-for-metrics.patch
-Patch0004:      0004-utils-move-parse_percent-to-tc_util.patch
-Patch0005:      0005-tc-util-constrain-percentage-in-0-100-interval.patch
-Patch0006:      0006-devlink-Change-devlink-health-dump-show-command-to-d.patch
-Patch0007:      0007-devlink-Fix-binary-values-print.patch
-Patch0008:      0008-devlink-Remove-enclosing-array-brackets-binary-print.patch
-Patch0009:      0009-json-fix-backslash-escape-typo-in-jsonw_puts.patch
-
-Patch9003:      bugfix-1001-iproute-change-proc-to-ipnetnsproc-which-is-private.patch
-	
 Provides:       /sbin/ip iproute-tc tc 
 Obsoletes:      iproute-tc 
 
@@ -67,7 +52,7 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %files
 %defattr(-,root,root)
 %license COPYING
-%doc README.lnstat
+%doc README
 %attr(644,root,root) %config(noreplace) %{_sysconfdir}/iproute2/*
 %{_sbindir}/*
 %{_libdir}/tc/*
@@ -78,14 +63,16 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %license COPYING
 %{_libdir}/libnetlink.a
 %{_includedir}/*
-%{_datadir}/doc/examples
 
 %files         help
 %defattr(-,root,root)
-%doc README README.distribution README.iproute2+tc
+%doc README
 %{_mandir}/*
 
 %changelog
+* Tue Jan 14 2020 openEuler Buildteam <buildteam@openeuler.org> - 5.4.0-1
+- update to 5.4.0
+
 * Fri Oct 18 2019 openEuler Buildteam <buildteam@openeuler.org> - 5.2.0-2
 - Type:bugfix
 - Id:NA
