@@ -1,10 +1,13 @@
 Name:		iproute
 Version:	5.4.0
-Release:	1
+Release:	2
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
 Source0:	https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-%{version}.tar.xz
+
+Patch1:         bugfix-iproute2-3.10.0-fix-maddr-show.patch         
+Patch2:         bugfix-iproute2-change-proc-to-ipnetnsproc-which-is-private.patch
 
 BuildRequires:	gcc bison elfutils-libelf-devel flex iptables-devel libcap-devel
 BuildRequires:  libdb-devel libmnl-devel libselinux-devel pkgconfig git
@@ -70,6 +73,9 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Mon Jan 20 2020 openEuler Buildteam <buildteam@openeuler.org> - 5.4.0-2
+- fix maddr show and change proc to ipnetnsproc
+
 * Tue Jan 14 2020 openEuler Buildteam <buildteam@openeuler.org> - 5.4.0-1
 - update to 5.4.0
 
