@@ -1,0 +1,108 @@
+From 1513e8162aee3202b99f26fa6c734766b5658db9 Mon Sep 17 00:00:00 2001
+From: Ying Lv <lvying6@huawei.com>
+Date: Mon, 2 Mar 2020 18:08:54 +0800
+
+---
+ ip/ip_common.h |  2 ++
+ ip/ipaddress.c |  2 +-
+ ip/ipnetns.c   | 51 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 54 insertions(+), 1 deletion(-)
+
+diff --git a/ip/ip_common.h b/ip/ip_common.h
+index 879287e..6d10e53 100644
+--- a/ip/ip_common.h
++++ b/ip/ip_common.h
+@@ -90,6 +90,8 @@ int iplink_ifla_xstats(int argc, char **argv);
+ int ip_link_list(req_filter_fn_t filter_fn, struct nlmsg_chain *linfo);
+ void free_nlmsg_chain(struct nlmsg_chain *info);
+ 
++int store_nlmsg(struct nlmsghdr *n, void *arg);
++
+ static inline int rtm_get_table(struct rtmsg *r, struct rtattr **tb)
+ {
+ 	__u32 table = r->rtm_table;
+diff --git a/ip/ipaddress.c b/ip/ipaddress.c
+index bc8f5ba..cb38db3 100644
+--- a/ip/ipaddress.c
++++ b/ip/ipaddress.c
+@@ -1519,7 +1519,7 @@ static int print_selected_addrinfo(struct ifinfomsg *ifi,
+ }
+ 
+ 
+-static int store_nlmsg(struct nlmsghdr *n, void *arg)
++int store_nlmsg(struct nlmsghdr *n, void *arg)
+ {
+ 	struct nlmsg_chain *lchain = (struct nlmsg_chain *)arg;
+ 	struct nlmsg_list *h;
+diff --git a/ip/ipnetns.c b/ip/ipnetns.c
+index fedc3db..e36ca51 100644
+--- a/ip/ipnetns.c
++++ b/ip/ipnetns.c
+@@ -754,6 +754,51 @@ static int netns_identify(int argc, char **argv)
+ 	return rc;
+ }
+ 
++static int check_netns_numbers(char *name) {
++	char net_path[MAXPATHLEN];
++	struct rtnl_handle rth = { .fd = -1 };
++	struct nlmsg_chain linfo = { NULL, NULL};
++	struct nlmsg_list *l;
++	int count = 0;
++	int netns;
++
++	snprintf(net_path, sizeof(net_path), "%s/%s", NETNS_RUN_DIR, name);
++	netns = open(net_path, O_RDONLY | O_CLOEXEC);
++	if (netns < 0) {
++		fprintf(stderr, "Cannot open network namespace \"%s\": %s\n",
++				name, strerror(errno));
++		exit(1);
++	}
++
++	if (setns(netns, CLONE_NEWNET) < 0) {
++		fprintf(stderr, "seting the network namespace \"%s\" failed: %s\n",
++				name, strerror(errno));
++		exit(1);
++	}
++
++	if (rtnl_open(&rth, 0) < 0)
++		exit(1);
++
++	if (rtnl_linkdump_req(&rth, AF_PACKET) < 0) {
++		fprintf(stderr, "Cannot send dump request");
++		exit(1);
++	}
++
++	if (rtnl_dump_filter(&rth, store_nlmsg, &linfo) < 0) {
++		fprintf(stderr, "Dump terminated\n");
++		exit(1);
++	}
++
++	for (l = linfo.head; l; l = l->next) {
++		count++;
++	}
++	free_nlmsg_chain(&linfo);
++
++	rtnl_close(&rth);
++	close(netns);
++	return count;
++}
++
+ static int on_netns_del(char *nsname, void *arg)
+ {
+ 	char netns_path[PATH_MAX];
+@@ -775,6 +820,12 @@ static int netns_delete(int argc, char **argv)
+ 		return -1;
+ 	}
+ 
++	if (check_netns_numbers(argv[0]) > 1) {
++		fprintf(stderr, "Cannot delete network namespace, there are some NICs"
++				" in %s namespace\n", argv[0]);
++		return -1;
++	}
++
+ 	if (do_all)
+ 		return netns_foreach(on_netns_del, NULL);
+ 
+-- 
+2.19.1
+

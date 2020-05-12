@@ -1,6 +1,6 @@
 Name:		iproute
-Version:	5.4.0
-Release:	2
+Version:	5.5.0
+Release:	1
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -8,6 +8,11 @@ Source0:	https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-%
 
 Patch1:         bugfix-iproute2-3.10.0-fix-maddr-show.patch         
 Patch2:         bugfix-iproute2-change-proc-to-ipnetnsproc-which-is-private.patch
+
+Patch9002:	feature-iproute-limit-operation-ip-netns-del.patch
+Patch9003:	feature-iproute-add-support-for-ipvlan-l2e-mode.patch
+Patch9004:	feature-peer_notify_delay-renamed-to-peer_notif_delay.patch
+Patch9005:	bugfix-iproute-support-assume-default-route.patch
 
 BuildRequires:	gcc bison elfutils-libelf-devel flex iptables-devel libcap-devel
 BuildRequires:  libdb-devel libmnl-devel libselinux-devel pkgconfig git
@@ -73,6 +78,36 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Fri Apr 17 2020 liaichun<liaichun@huawei.com> - 5.5.0-1
+- Type:bugfix
+- ID:NA
+- SUG:restart
+- DESC:update to 5.5.0-1
+
+* Sat Mar 21 2020 liaichun<liaichun@huawei.com> - 5.4.0-6
+- Type:bugfix
+- ID:NA
+- SUG:restart
+- DESC:fix some err information
+
+* Wed Mar 4 2020 liuzhikang<liuzhikang3@huawei.com> - 5.4.0-5
+- Type:bugfix
+- ID:NA
+- SUG:restart
+- DESC:update patch
+
+* Wed Mar 4 2020 wangli <wangli221@huawei.com> - 5.4.0-4
+- Type:bugfix
+- ID:NA
+- SUG:restart
+- DESC:peer_notify_delay renamed to peer_notif_delay
+
+* Mon Mar 2 2020 liuzhikang<liuzhikang3@huawei.com> - 5.4.0-3
+- Type:bugfix
+- ID:NA
+- SUG:restart
+- DESC: update patch
+
 * Mon Jan 20 2020 openEuler Buildteam <buildteam@openeuler.org> - 5.4.0-2
 - fix maddr show and change proc to ipnetnsproc
 
