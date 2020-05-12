@@ -1,0 +1,25 @@
+From e2e13e8d97f88895af7a9ef5fd5c8e792e1ea7ea Mon Sep 17 00:00:00 2001
+From: Li Shang <shangli1@huawei.com>
+Date: Wed, 4 Mar 2020 15:27:47 +0800
+
+---
+ ip/iproute.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/ip/iproute.c b/ip/iproute.c
+index 32bb52d..12fcd7d 100644
+--- a/ip/iproute.c
++++ b/ip/iproute.c
+@@ -1497,9 +1497,6 @@ static int iproute_modify(int cmd, unsigned int flags, int argc, char **argv)
+ 		argc--; argv++;
+ 	}
+ 
+-	if (!dst_ok)
+-		usage();
+-
+ 	if (d) {
+ 		int idx = ll_name_to_index(d);
+ 
+-- 
+2.19.1
+
