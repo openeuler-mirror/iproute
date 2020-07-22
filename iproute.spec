@@ -1,6 +1,6 @@
 Name:		iproute
-Version:	5.4.0
-Release:	2
+Version:	5.7.0
+Release:	1
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -59,7 +59,7 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %attr(644,root,root) %config(noreplace) %{_sysconfdir}/iproute2/*
 %{_sbindir}/*
 %{_libdir}/tc/*
-%{_datadir}/bash-completion/completions/tc
+%{_datadir}/bash-completion/completions/*
 
 %files         devel
 %defattr(-,root,root)
@@ -73,6 +73,9 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Wed Jul 22 2020 hanzhijun <hanzhijun1@huawei.com> - 5.7.0-1
+- update to 5.7.0
+
 * Mon Jan 20 2020 openEuler Buildteam <buildteam@openeuler.org> - 5.4.0-2
 - fix maddr show and change proc to ipnetnsproc
 
