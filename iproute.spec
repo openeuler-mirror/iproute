@@ -1,6 +1,6 @@
 Name:		iproute
 Version:	5.5.0
-Release:	1
+Release:	2
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -42,6 +42,8 @@ Header files for iprout2
 %autosetup -n %{name}2-%{version} -p1 -S git
 
 %build
+export LIBDIR='{_libdir}'
+export IPT_LIB_DIR='/%{_lib}/xtables'
 %configure
 %make_build
 
@@ -78,6 +80,12 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Tue Sep 25 2020 zhouyihang <zhouyihang3@huawei.com> - 5.5.0-2
+- Type:bugfix
+- Id:NA
+- SUG:NA
+- DESC:fix get_tc_lib err
+
 * Fri Apr 17 2020 liaichun<liaichun@huawei.com> - 5.5.0-1
 - Type:bugfix
 - ID:NA
