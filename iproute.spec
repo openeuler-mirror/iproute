@@ -1,6 +1,6 @@
 Name:		iproute
 Version:	5.5.0
-Release:	2
+Release:	3
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -16,6 +16,7 @@ Patch9005:	bugfix-iproute-support-assume-default-route.patch
 
 BuildRequires:	gcc bison elfutils-libelf-devel flex iptables-devel libcap-devel
 BuildRequires:  libdb-devel libmnl-devel libselinux-devel pkgconfig git
+Requires:       %{name}-help
 
 Provides:       /sbin/ip iproute-tc tc 
 Obsoletes:      iproute-tc 
@@ -80,6 +81,12 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Mon Nov 09 2020 quanhongfei <quanhongfei@huawei.com> - 5.5.0-3
+- Type:requirement
+- Id:NA
+- SUG:NA
+- DESC:add iproute-help dependency for iproute
+
 * Tue Sep 25 2020 zhouyihang <zhouyihang3@huawei.com> - 5.5.0-2
 - Type:bugfix
 - Id:NA
