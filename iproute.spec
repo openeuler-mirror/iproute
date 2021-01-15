@@ -1,6 +1,6 @@
 Name:		iproute
 Version:	5.5.0
-Release:	4
+Release:	5
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -15,7 +15,7 @@ Patch9004:	feature-peer_notify_delay-renamed-to-peer_notif_delay.patch
 Patch9005:	bugfix-iproute-support-assume-default-route.patch
 
 BuildRequires:	gcc bison elfutils-libelf-devel flex iptables-devel libcap-devel
-BuildRequires:  libdb-devel libmnl-devel libselinux-devel pkgconfig git
+BuildRequires:  libmnl-devel libselinux-devel pkgconfig git
 Requires:       %{name}-help
 
 Provides:       /sbin/ip iproute-tc tc 
@@ -81,6 +81,12 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Fri Jan 15 2021 gaihuiying <gaihuiying1@huawei.com> - 5.5.0-5
+- Type:requirement
+- Id:NA
+- SUG:NA
+- DESC:remove libdb-devel dependency
+
 * Thu Dec 10 2020 zhouyihang <zhouyihang3@huawei.com> - 5.5.0-4
 - Type:bugfix
 - Id:NA
