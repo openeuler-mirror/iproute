@@ -1,6 +1,6 @@
 Name:		iproute
-Version:	5.7.0
-Release:	3
+Version:	5.10.0
+Release:	1
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -75,6 +75,12 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Tue Jan 26 2021 xihaochen<xihaochen@huawei.com> - 5.10.0-1
+- Type:requirements
+- ID:NA
+- SUG:NA
+- DESC: update iproute to 5.10.0
+
 * Thu Dec 10 2020 zhouyihang <zhouyihang3@huawei.com> - 5.7.0-3
 - Type:bugfix
 - Id:NA
