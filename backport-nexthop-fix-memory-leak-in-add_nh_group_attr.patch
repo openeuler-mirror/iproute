@@ -1,0 +1,74 @@
+From 6a2c51da993ab9f8b385ee2bf13814f8e8000ce5 Mon Sep 17 00:00:00 2001
+From: Andrea Claudi <aclaudi@redhat.com>
+Date: Wed, 14 Apr 2021 00:50:45 +0200
+Subject: [PATCH] nexthop: fix memory leak in add_nh_group_attr()
+
+grps is dinamically allocated with a calloc, and not freed in a return
+path in the for cycle. This commit fix it.
+
+While at it, make the function use a single return point.
+
+Fixes: 63df8e8543b0 ("Add support for nexthop objects")
+Signed-off-by: Andrea Claudi <aclaudi@redhat.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Conflict: NA
+Reference: https://git.kernel.org/pub/scm/network/iproute2/iproute2.git/commit?id=6a2c51da993ab9f8b385ee2bf13814f8e8000ce5
+---
+ ip/ipnexthop.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/ip/ipnexthop.c b/ip/ipnexthop.c
+index 20cde586..f0658a9c 100644
+--- a/ip/ipnexthop.c
++++ b/ip/ipnexthop.c
+@@ -277,8 +277,9 @@ int print_nexthop(struct nlmsghdr *n, void *arg)
+ 
+ static int add_nh_group_attr(struct nlmsghdr *n, int maxlen, char *argv)
+ {
+-	struct nexthop_grp *grps;
++	struct nexthop_grp *grps = NULL;
+ 	int count = 0, i;
++	int err = -1;
+ 	char *sep, *wsep;
+ 
+ 	if (*argv != '\0')
+@@ -292,11 +293,11 @@ static int add_nh_group_attr(struct nlmsghdr *n, int maxlen, char *argv)
+ 	}
+ 
+ 	if (count == 0)
+-		return -1;
++		goto out;
+ 
+ 	grps = calloc(count, sizeof(*grps));
+ 	if (!grps)
+-		return -1;
++		goto out;
+ 
+ 	for (i = 0; i < count; ++i) {
+ 		sep = strchr(argv, '/');
+@@ -308,7 +309,7 @@ static int add_nh_group_attr(struct nlmsghdr *n, int maxlen, char *argv)
+ 			*wsep = '\0';
+ 
+ 		if (get_unsigned(&grps[i].id, argv, 0))
+-			return -1;
++			goto out;
+ 		if (wsep) {
+ 			unsigned int w;
+ 
+@@ -324,7 +325,12 @@ static int add_nh_group_attr(struct nlmsghdr *n, int maxlen, char *argv)
+ 		argv = sep + 1;
+ 	}
+ 
+-	return addattr_l(n, maxlen, NHA_GROUP, grps, count * sizeof(*grps));
++	err = addattr_l(n, maxlen, NHA_GROUP, grps, count * sizeof(*grps));
++out:
++	if (grps != NULL) {
++		free(grps);
++	}
++	return err;
+ }
+ 
+ static int ipnh_modify(int cmd, unsigned int flags, int argc, char **argv)
+-- 
+2.23.0
+

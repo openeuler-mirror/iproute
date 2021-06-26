@@ -1,0 +1,82 @@
+From e705b19d489f769228902e100b4f375c03becfbb Mon Sep 17 00:00:00 2001
+From: Tony Ambardar <tony.ambardar@gmail.com>
+Date: Tue, 20 Apr 2021 01:26:36 -0700
+Subject: [PATCH] ip: drop 2-char command assumption
+
+The 'ip' utility hardcodes the assumption of being a 2-char command, where
+any follow-on characters are passed as an argument:
+
+  $ ./ip-full help
+  Object "-full" is unknown, try "ip help".
+
+This confusing behaviour isn't seen with 'tc' for example, and was added in
+a 2005 commit without documentation. It was noticed during testing of 'ip'
+variants built/packaged with different feature sets (e.g. w/o BPF support).
+
+Mitigate the problem by redoing the command without the 2-char assumption
+if the follow-on characters fail to parse as a valid command.
+
+Fixes: 351efcde4e62 ("Update header files to 2.6.14")
+Signed-off-by: Tony Ambardar <Tony.Ambardar@gmail.com>
+Signed-off-by: David Ahern <dsahern@kernel.org>
+Conflict: batch function has refactor
+Reference: https://git.kernel.org/pub/scm/network/iproute2/iproute2.git/commit?id=e705b19d489f769228902e100b4f375c03becfbb
+
+---
+ ip/ip.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/ip/ip.c b/ip/ip.c
+index 90392c2..90c04dc 100644
+--- a/ip/ip.c
++++ b/ip/ip.c
+@@ -107,7 +107,7 @@ static const struct cmd {
+ 	{ 0 }
+ };
+ 
+-static int do_cmd(const char *argv0, int argc, char **argv)
++static int do_cmd(const char *argv0, int argc, char **argv, bool final)
+ {
+ 	const struct cmd *c;
+ 
+@@ -116,7 +116,8 @@ static int do_cmd(const char *argv0, int argc, char **argv)
+ 			return -(c->func(argc-1, argv+1));
+ 	}
+ 
+-	fprintf(stderr, "Object \"%s\" is unknown, try \"ip help\".\n", argv0);
++	if (final)
++		fprintf(stderr, "Object \"%s\" is unknown, try \"ip help\".\n", argv0);
+ 	return EXIT_FAILURE;
+ }
+ 
+@@ -154,7 +155,7 @@ static int batch(const char *name)
+ 		if (largc == 0)
+ 			continue;	/* blank line */
+ 
+-		if (do_cmd(largv[0], largc, largv)) {
++		if (do_cmd(largv[0], largc, largv, true)) {
+ 			fprintf(stderr, "Command failed %s:%d\n",
+ 				name, cmdlineno);
+ 			ret = EXIT_FAILURE;
+@@ -315,11 +316,15 @@ int main(int argc, char **argv)
+ 
+ 	rtnl_set_strict_dump(&rth);
+ 
+-	if (strlen(basename) > 2)
+-		return do_cmd(basename+2, argc, argv);
++	if (strlen(basename) > 2) {
++		int ret = do_cmd(basename+2, argc, argv, false);
++		if (ret != EXIT_FAILURE)
++			return ret;
++	}
++
+ 
+ 	if (argc > 1)
+-		return do_cmd(argv[1], argc-1, argv+1);
++		return do_cmd(argv[1], argc-1, argv+1, true);
+ 
+ 	rtnl_close(&rth);
+ 	usage();
+-- 
+2.23.0
+

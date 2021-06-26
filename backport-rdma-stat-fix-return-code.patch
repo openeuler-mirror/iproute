@@ -1,0 +1,35 @@
+From c8216fabe8d9df3db38283cca1b6caeca033f9b9 Mon Sep 17 00:00:00 2001
+From: Andrea Claudi <aclaudi@redhat.com>
+Date: Sun, 18 Apr 2021 14:56:30 +0200
+Subject: [PATCH] rdma: stat: fix return code
+
+libmnl defines MNL_CB_OK as 1 and MNL_CB_ERROR as -1. rdma uses these
+return codes, and stat_qp_show_parse_cb() should do the same.
+
+Fixes: 16ce4d23661a ("rdma: stat: initialize ret in stat_qp_show_parse_cb()")
+Reported-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Andrea Claudi <aclaudi@redhat.com>
+Acked-by: Leon Romanovsky <leonro@nvidia.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Conflict: ret value is random
+Reference: https://git.kernel.org/pub/scm/network/iproute2/iproute2.git/commit?id=c8216fabe8d9df3db38283cca1b6caeca033f9b9
+---
+ rdma/stat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/rdma/stat.c b/rdma/stat.c
+index 3abedae7..8edf7bf1 100644
+--- a/rdma/stat.c
++++ b/rdma/stat.c
+@@ -307,7 +307,7 @@ static int stat_qp_show_parse_cb(const struct nlmsghdr *nlh, void *data)
+ 	struct rd *rd = data;
+ 	const char *name;
+ 	uint32_t idx;
+-	int ret;
++	int ret = MNL_CB_OK;
+ 
+ 	mnl_attr_parse(nlh, 0, rd_attr_cb, tb);
+ 	if (!tb[RDMA_NLDEV_ATTR_DEV_INDEX] || !tb[RDMA_NLDEV_ATTR_DEV_NAME] ||
+-- 
+2.23.0
+
