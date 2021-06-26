@@ -1,0 +1,37 @@
+From 1de363b1800c371037ff2b2a6c1004627e58f68e Mon Sep 17 00:00:00 2001
+From: Andrea Claudi <aclaudi@redhat.com>
+Date: Mon, 22 Feb 2021 19:14:31 +0100
+Subject: [PATCH] lib/fs: avoid double call to mkdir on make_path()
+
+make_path() function calls mkdir two times in a row. The first one it
+stores mkdir return code, and then it calls it again to check for errno.
+
+This seems unnecessary, as we can use the return code from the first
+call and check for errno if not 0.
+
+Fixes: ac3415f5c1b1d ("lib/fs: Fix and simplify make_path()")
+Acked-by: Phil Sutter <phil@nwl.cc>
+Signed-off-by: Andrea Claudi <aclaudi@redhat.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Conflict: NA
+Reference: https://git.kernel.org/pub/scm/network/iproute2/iproute2.git/commit?id=1de363b1800c371037ff2b2a6c1004627e58f68e
+---
+ lib/fs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/fs.c b/lib/fs.c
+index 4b90a704..2ae506ec 100644
+--- a/lib/fs.c
++++ b/lib/fs.c
+@@ -253,7 +253,7 @@ int make_path(const char *path, mode_t mode)
+ 			*delim = '\0';
+ 
+ 		rc = mkdir(dir, mode);
+-		if (mkdir(dir, mode) != 0 && errno != EEXIST) {
++		if (rc && errno != EEXIST) {
+ 			fprintf(stderr, "mkdir failed for %s: %s\n",
+ 				dir, strerror(errno));
+ 			goto out;
+-- 
+2.23.0
+
