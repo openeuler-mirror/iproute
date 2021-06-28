@@ -1,13 +1,21 @@
 Name:		iproute
 Version:	5.5.0
-Release:	4
+Release:	5
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
 Source0:	https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-%{version}.tar.xz
 
-Patch1:         bugfix-iproute2-3.10.0-fix-maddr-show.patch         
+Patch1:         bugfix-iproute2-3.10.0-fix-maddr-show.patch
 Patch2:         bugfix-iproute2-change-proc-to-ipnetnsproc-which-is-private.patch
+Patch3:         backport-lib-fs-avoid-double-call-to-mkdir-on-make_path.patch
+Patch4:         backport-devlink-always-check-strslashrsplit-return-value.patch
+Patch5:         backport-nexthop-fix-memory-leak-in-add_nh_group_attr.patch
+Patch6:         backport-rdma-stat-fix-return-code.patch
+Patch7:         backport-ip-drop-2-char-command-assumption.patch
+Patch8:         backport-ip-netns-fix-missing-netns-close-on-some-error-paths.patch
+Patch9:         backport-lib-bpf_legacy-fix-missing-socket-close-when-connect.patch
+Patch10:        backport-tc-e_bpf-fix-memory-leak-in-parse_bpf.patch
 
 Patch9002:	feature-iproute-limit-operation-ip-netns-del.patch
 Patch9003:	feature-iproute-add-support-for-ipvlan-l2e-mode.patch
@@ -81,6 +89,18 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Sat Jun 26 2021 jiangheng <jiangheng12@huawei.com> - 5.5.0-5
+- Type:bugfix
+- Id:NA
+- SUG:NA
+- DESC:fix memory leak in parse_bpf() and add_nh_group_attr()
+       fix return code in stat_qp_show_parse_cb()
+       avoid double call to mkdir on make_path()
+       fix missing socket close when connect()
+       fix missing netns(fd) close on some error paths
+       drop 2 char command assumption
+       check strslashrsplit() return value
+
 * Thu Dec 10 2020 zhouyihang <zhouyihang3@huawei.com> - 5.5.0-4
 - Type:bugfix
 - Id:NA

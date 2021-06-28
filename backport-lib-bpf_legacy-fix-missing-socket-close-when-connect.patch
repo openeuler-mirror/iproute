@@ -1,0 +1,103 @@
+From e1ad689545a0a2a798869cb95de7dbe4b138bdae Mon Sep 17 00:00:00 2001
+From: Andrea Claudi <aclaudi@redhat.com>
+Date: Mon, 19 Apr 2021 15:49:57 +0200
+Subject: [PATCH] lib: bpf_legacy: fix missing socket close when connect()
+ fails
+
+In functions bpf_{send,recv}_map_fds(), when connect fails after a
+socket is successfully opened, we return with error missing a close on
+the socket.
+
+Fix this closing the socket if opened and using a single return point
+for both the functions.
+
+Fixes: 6256f8c9e45f ("tc, bpf: finalize eBPF support for cls and act front-end")
+Signed-off-by: Andrea Claudi <aclaudi@redhat.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Conflict: rename bpf_legacy.c
+Reference: https://git.kernel.org/pub/scm/network/iproute2/iproute2.git/commit?id=e1ad689545a0a2a798869cb95de7dbe4b138bdae
+
+---
+ lib/bpf.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/lib/bpf.c b/lib/bpf.c
+index 23cb0d9..397803f 100644
+--- a/lib/bpf.c
++++ b/lib/bpf.c
+@@ -3100,13 +3100,13 @@ int bpf_send_map_fds(const char *path, const char *obj)
+ 		.st  = &ctx->stat,
+ 		.obj = obj,
+ 	};
+-	int fd, ret;
++	int fd, ret = -1;
+ 
+ 	fd = socket(AF_UNIX, SOCK_DGRAM, 0);
+ 	if (fd < 0) {
+ 		fprintf(stderr, "Cannot open socket: %s\n",
+ 			strerror(errno));
+-		return -1;
++		goto out;
+ 	}
+ 
+ 	strlcpy(addr.sun_path, path, sizeof(addr.sun_path));
+@@ -3115,7 +3115,7 @@ int bpf_send_map_fds(const char *path, const char *obj)
+ 	if (ret < 0) {
+ 		fprintf(stderr, "Cannot connect to %s: %s\n",
+ 			path, strerror(errno));
+-		return -1;
++		goto out;
+ 	}
+ 
+ 	ret = bpf_map_set_send(fd, &addr, sizeof(addr), &bpf_aux,
+@@ -3125,7 +3125,9 @@ int bpf_send_map_fds(const char *path, const char *obj)
+ 			path, strerror(errno));
+ 
+ 	bpf_maps_teardown(ctx);
+-	close(fd);
++out:
++	if (fd >= 0)
++		close(fd);
+ 	return ret;
+ }
+ 
+@@ -3133,13 +3135,13 @@ int bpf_recv_map_fds(const char *path, int *fds, struct bpf_map_aux *aux,
+ 		     unsigned int entries)
+ {
+ 	struct sockaddr_un addr = { .sun_family = AF_UNIX };
+-	int fd, ret;
++	int fd, ret = -1;
+ 
+ 	fd = socket(AF_UNIX, SOCK_DGRAM, 0);
+ 	if (fd < 0) {
+ 		fprintf(stderr, "Cannot open socket: %s\n",
+ 			strerror(errno));
+-		return -1;
++		goto out;
+ 	}
+ 
+ 	strlcpy(addr.sun_path, path, sizeof(addr.sun_path));
+@@ -3148,7 +3150,7 @@ int bpf_recv_map_fds(const char *path, int *fds, struct bpf_map_aux *aux,
+ 	if (ret < 0) {
+ 		fprintf(stderr, "Cannot bind to socket: %s\n",
+ 			strerror(errno));
+-		return -1;
++		goto out;
+ 	}
+ 
+ 	ret = bpf_map_set_recv(fd, fds, aux, entries);
+@@ -3157,7 +3159,10 @@ int bpf_recv_map_fds(const char *path, int *fds, struct bpf_map_aux *aux,
+ 			path, strerror(errno));
+ 
+ 	unlink(addr.sun_path);
+-	close(fd);
++out:
++	if (fd >= 0) {
++		close(fd);
++	}
+ 	return ret;
+ }
+ #endif /* HAVE_ELF */
+-- 
+2.23.0
+
