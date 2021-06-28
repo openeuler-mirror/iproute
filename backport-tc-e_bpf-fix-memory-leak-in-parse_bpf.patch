@@ -1,0 +1,34 @@
+From 932fe3453f39503b5689912d7e0b01ac2b03e7a0 Mon Sep 17 00:00:00 2001
+From: Andrea Claudi <aclaudi@redhat.com>
+Date: Mon, 19 Apr 2021 15:36:57 +0200
+Subject: [PATCH] tc: e_bpf: fix memory leak in parse_bpf()
+
+envp_run is dinamically allocated with a malloc, and not freed in the
+out: return path. This commit fix it.
+
+Signed-off-by: Andrea Claudi <aclaudi@redhat.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Conflict: NA
+Reference: https://git.kernel.org/pub/scm/network/iproute2/iproute2.git/commit?id=932fe3453f39503b5689912d7e0b01ac2b03e7a0
+---
+ tc/e_bpf.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tc/e_bpf.c b/tc/e_bpf.c
+index a48393b7..517ee5b3 100644
+--- a/tc/e_bpf.c
++++ b/tc/e_bpf.c
+@@ -159,7 +159,9 @@ static int parse_bpf(struct exec_util *eu, int argc, char **argv)
+ 
+ 	envp_run[env_num - 1] = NULL;
+ out:
+-	return execvpe(argv_run[0], argv_run, envp_run);
++	ret = execvpe(argv_run[0], argv_run, envp_run);
++	free(envp_run);
++	return ret;
+ 
+ err_free_env:
+ 	for (--i; i >= env_old; i--)
+-- 
+2.23.0
+
