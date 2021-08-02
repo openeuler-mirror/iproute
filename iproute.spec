@@ -1,6 +1,6 @@
 Name:		iproute
 Version:	5.10.0
-Release:	1
+Release:	2
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -10,7 +10,7 @@ Patch1:         bugfix-iproute2-3.10.0-fix-maddr-show.patch
 Patch2:         bugfix-iproute2-change-proc-to-ipnetnsproc-which-is-private.patch
 
 BuildRequires:	gcc bison elfutils-libelf-devel flex iptables-devel libcap-devel
-BuildRequires:  libdb-devel libmnl-devel libselinux-devel pkgconfig git
+BuildRequires:  libdb-devel libmnl-devel libselinux-devel pkgconfig
 
 Provides:       /sbin/ip iproute-tc tc 
 Obsoletes:      iproute-tc 
@@ -34,7 +34,7 @@ Header files for iprout2
 %package_help
 
 %prep
-%autosetup -n %{name}2-%{version} -p1 -S git
+%autosetup -n %{name}2-%{version} -p1
 
 %build
 export LIBDIR='%{_libdir}'
@@ -75,6 +75,9 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Mon Aug 02 2021 chenyanpanHW <chenyanpan@huawei.com> - 5.10.0-2
+- DESC: delete -S git from %autosetup, and delete BuildRequires git
+
 * Tue Jan 26 2021 xihaochen<xihaochen@huawei.com> - 5.10.0-1
 - Type:requirements
 - ID:NA
