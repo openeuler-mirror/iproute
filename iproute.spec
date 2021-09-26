@@ -1,6 +1,7 @@
+#needsrootforbuild
 Name:		iproute
 Version:	5.10.0
-Release:	1
+Release:	2
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -8,9 +9,10 @@ Source0:	https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-%
 
 Patch1:         bugfix-iproute2-3.10.0-fix-maddr-show.patch         
 Patch2:         bugfix-iproute2-change-proc-to-ipnetnsproc-which-is-private.patch
+Patch3:         bugfix-iproute2-cancel-some-test-cases.patch
 
 BuildRequires:	gcc bison elfutils-libelf-devel flex iptables-devel libcap-devel
-BuildRequires:  libdb-devel libmnl-devel libselinux-devel pkgconfig git
+BuildRequires:  libdb-devel libmnl-devel libselinux-devel pkgconfig git sudo
 
 Provides:       /sbin/ip iproute-tc tc 
 Obsoletes:      iproute-tc 
@@ -41,6 +43,13 @@ export LIBDIR='%{_libdir}'
 export IPT_LIB_DIR='/%{_lib}/xtables'
 %configure
 %make_build
+
+%check
+make check
+if test -n "$(find . -name *.err)"; then
+	echo "make check failed, please check"
+	exit 1
+fi
 
 %install
 export CONFDIR='%{_sysconfdir}/iproute2'
@@ -75,6 +84,12 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Sun Sep 26 2021 jiangheng<jiangheng12@huawei.com> - 5.10.0-2
+- Type:bugfix
+- ID:NA
+- SUG:NA
+- DESC: enable make check
+
 * Tue Jan 26 2021 xihaochen<xihaochen@huawei.com> - 5.10.0-1
 - Type:requirements
 - ID:NA
