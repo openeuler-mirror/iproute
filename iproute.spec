@@ -1,6 +1,7 @@
+#needsrootforbuild
 Name:		iproute
 Version:	5.5.0
-Release:	5
+Release:	6
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -21,9 +22,10 @@ Patch9002:	feature-iproute-limit-operation-ip-netns-del.patch
 Patch9003:	feature-iproute-add-support-for-ipvlan-l2e-mode.patch
 Patch9004:	feature-peer_notify_delay-renamed-to-peer_notif_delay.patch
 Patch9005:	bugfix-iproute-support-assume-default-route.patch
+Patch9006:	bugfix-iproute2-cancel-some-test-cases.patch
 
 BuildRequires:	gcc bison elfutils-libelf-devel flex iptables-devel libcap-devel
-BuildRequires:  libdb-devel libmnl-devel libselinux-devel pkgconfig git
+BuildRequires:  libdb-devel libmnl-devel libselinux-devel pkgconfig git sudo
 Requires:       %{name}-help
 
 Provides:       /sbin/ip iproute-tc tc 
@@ -55,6 +57,13 @@ export LIBDIR='%{_libdir}'
 export IPT_LIB_DIR='/%{_lib}/xtables'
 %configure
 %make_build
+
+%check
+make check
+if test -n "$(find . -name *.err)"; then
+	echo "make check failed, please check"
+	exit 1
+fi
 
 %install
 export CONFDIR='%{_sysconfdir}/iproute2'
@@ -89,6 +98,12 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Sun Sep 26 2021 jiangheng <jiangheng12@huawei.com> - 5.5.0-6
+- Type:bugfix
+- Id:NA
+- SUG:NA
+- DESC:enable make check
+
 * Sat Jun 26 2021 jiangheng <jiangheng12@huawei.com> - 5.5.0-5
 - Type:bugfix
 - Id:NA
