@@ -1,0 +1,36 @@
+From 9ce12b62181cfed8ddac855efb858f88ac036ce1 Mon Sep 17 00:00:00 2001
+From: Puneet Sharma <pusharma@akamai.com>
+Date: Mon, 20 Sep 2021 11:00:01 -0400
+Subject: [PATCH] tc/f_flower: fix port range parsing
+
+Provided port range in tc rule are parsed incorrectly.
+Even though range is passed as min-max. It throws an error.
+
+$ tc filter add dev eth0 ingress handle 100 priority 10000 protocol ipv4 flower ip_proto tcp dst_port 10368-61000 action pass
+max value should be greater than min value
+Illegal "dst_port"
+
+Fixes: 8930840e678b ("tc: flower: Classify packets based port ranges")
+Signed-off-by: Puneet Sharma <pusharma@akamai.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Conflict: NA
+---
+ tc/f_flower.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tc/f_flower.c b/tc/f_flower.c
+index 8f248db..e7f28c6 100644
+--- a/tc/f_flower.c
++++ b/tc/f_flower.c
+@@ -717,7 +717,7 @@ static int flower_parse_port(char *str, __u8 ip_proto,
+ 	if (min && max) {
+ 		__be16 min_port_type, max_port_type;
+ 
+-		if (max <= min) {
++		if (ntohs(max) <= ntohs(min)) {
+ 			fprintf(stderr, "max value should be greater than min value\n");
+ 			return -1;
+ 		}
+-- 
+1.8.3.1
+
