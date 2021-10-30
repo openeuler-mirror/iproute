@@ -1,0 +1,52 @@
+From cdedd335b6cbe7fff492b32ef00d928d8d389570 Mon Sep 17 00:00:00 2001
+From: Andrea Claudi <aclaudi@redhat.com>
+Date: Tue, 21 Sep 2021 11:33:24 +0200
+Subject: [PATCH] lib: bpf_legacy: fix bpffs mount when /sys/fs/bpf exists
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+bpf selftests using iproute2 fails with:
+
+$ ip link set dev veth0 xdp object ../bpf/xdp_dummy.o section xdp_dummy
+Continuing without mounted eBPF fs. Too old kernel?
+mkdir (null)/globals failed: No such file or directory
+Unable to load program
+
+This happens when the /sys/fs/bpf directory exists. In this case, mkdir
+in bpf_mnt_check_target() fails with errno == EEXIST, and the function
+returns -1. Thus bpf_get_work_dir() does not call bpf_mnt_fs() and the
+bpffs is not mounted.
+
+Fix this in bpf_mnt_check_target(), returning 0 when the mountpoint
+exists.
+
+Fixes: d4fcdbbec9df ("lib/bpf: Fix and simplify bpf_mnt_check_target()")
+Reported-by: Mingyu Shi <mshi@redhat.com>
+Reported-by: Jiri Benc <jbenc@redhat.com>
+Suggested-by: Jiri Benc <jbenc@redhat.com>
+Signed-off-by: Andrea Claudi <aclaudi@redhat.com>
+Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+
+Conflicts: lib/bpf.c
+---
+ lib/bpf.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/lib/bpf.c b/lib/bpf.c
+index 0062e83..014314b 100644
+--- a/lib/bpf.c
++++ b/lib/bpf.c
+@@ -525,6 +525,8 @@ static int bpf_mnt_check_target(const char *target)
+ 	if (ret) {
+ 		ret = mkdir(target, S_IRWXU);
+ 		if (ret) {
++			if (errno == EEXIST)
++				return 0;
+ 			fprintf(stderr, "mkdir %s failed: %s\n", target,
+ 				strerror(errno));
+ 			return ret;
+-- 
+1.8.3.1
+
