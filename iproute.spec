@@ -1,7 +1,7 @@
 #needsrootforbuild
 Name:		iproute
 Version:	5.5.0
-Release:	7
+Release:	8
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -23,8 +23,8 @@ Patch9003:	feature-iproute-add-support-for-ipvlan-l2e-mode.patch
 Patch9004:	feature-peer_notify_delay-renamed-to-peer_notif_delay.patch
 Patch9005:	bugfix-iproute-support-assume-default-route.patch
 Patch9006:	bugfix-iproute2-cancel-some-test-cases.patch
-Patch9007:      bugfix-iproute2-lib-bpf-fix-bpffs-mount-when-sys-fs-bpf-exist.patch 
-Patch9008:      bugfix-iproute2-tc-f_flower-fix-port-range-parsing.patch
+Patch11:        backport-bugfix-iproute2-lib-bpf-fix-bpffs-mount-when-sys-fs-bpf-exist.patch 
+Patch12:        backport-bugfix-iproute2-tc-f_flower-fix-port-range-parsing.patch
 
 BuildRequires:	gcc bison elfutils-libelf-devel flex iptables-devel libcap-devel
 BuildRequires:  libdb-devel libmnl-devel libselinux-devel pkgconfig git sudo
@@ -100,6 +100,12 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Tue Nov 02 2021 jiangheng <jiangheng12@huawei.com> - 5.5.0-8
+- Type:bugfix
+- Id:NA
+- SUG:NA
+- DESC:rename patches name
+
 * Fri Oct 29 2021 chengyechun <chengyechun1@huawei.com> - 5.5.0-7
 - Type:bugfix
 - Id:NA
