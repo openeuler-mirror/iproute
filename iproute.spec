@@ -1,6 +1,6 @@
 Name:		iproute
 Version:	5.5.0
-Release:	7
+Release:	8
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -16,14 +16,14 @@ Patch7:         backport-ip-drop-2-char-command-assumption.patch
 Patch8:         backport-ip-netns-fix-missing-netns-close-on-some-error-paths.patch
 Patch9:         backport-lib-bpf_legacy-fix-missing-socket-close-when-connect.patch
 Patch10:        backport-tc-e_bpf-fix-memory-leak-in-parse_bpf.patch
+Patch11:        backport-bugfix-iproute2-lib-bpf-fix-bpffs-mount-when-sys-fs-bpf-exist.patch
+Patch12:        backport-bugfix-iproute2-tc-f_flower-fix-port-range-parsing.patch
 
 Patch9002:	feature-iproute-limit-operation-ip-netns-del.patch
 Patch9003:	feature-iproute-add-support-for-ipvlan-l2e-mode.patch
 Patch9004:	feature-peer_notify_delay-renamed-to-peer_notif_delay.patch
 Patch9005:	bugfix-iproute-support-assume-default-route.patch
-
-Patch11:        backport-bugfix-iproute2-lib-bpf-fix-bpffs-mount-when-sys-fs-bpf-exist.patch
-Patch12:        backport-bugfix-iproute2-tc-f_flower-fix-port-range-parsing.patch
+Patch9006:	huawei-lnstat-fix-buffer-overflow-in-lnstat-command.patch
 
 BuildRequires:	gcc bison elfutils-libelf-devel flex iptables-devel libcap-devel
 BuildRequires:  libmnl-devel libselinux-devel pkgconfig git
@@ -92,6 +92,12 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Tue Nov 16 2021 jiangheng <jiangheng12@huawei.com> - 5.5.0-8
+- Type:bugfix
+- Id:NA
+- SUG:NA
+- DESC:fix buffer overflow in lnstat command
+
 * Fri Oct 29 2021 jiangheng <jiangheng12@huawei.com> - 5.5.0-7
 - Type:bugfix
 - Id:NA
