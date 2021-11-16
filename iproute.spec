@@ -1,6 +1,6 @@
 Name:		iproute
 Version:	5.5.0
-Release:	4
+Release:	5
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -8,13 +8,14 @@ Source0:	https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-%
 
 Patch1:         bugfix-iproute2-3.10.0-fix-maddr-show.patch         
 Patch2:         bugfix-iproute2-change-proc-to-ipnetnsproc-which-is-private.patch
+Patch3:         backport-bugfix-iproute2-lib-bpf-fix-bpffs-mount-when-sys-fs-bpf-exist.patch 
+Patch4:         backport-bugfix-iproute2-tc-f_flower-fix-port-range-parsing.patch
 
 Patch9002:	feature-iproute-limit-operation-ip-netns-del.patch
 Patch9003:	feature-iproute-add-support-for-ipvlan-l2e-mode.patch
 Patch9004:	feature-peer_notify_delay-renamed-to-peer_notif_delay.patch
 Patch9005:	bugfix-iproute-support-assume-default-route.patch
-Patch3:         backport-bugfix-iproute2-lib-bpf-fix-bpffs-mount-when-sys-fs-bpf-exist.patch 
-Patch4:         backport-bugfix-iproute2-tc-f_flower-fix-port-range-parsing.patch
+Patch9006:	huawei-lnstat-fix-buffer-overflow-in-lnstat-command.patch
 
 BuildRequires:	gcc bison elfutils-libelf-devel flex iptables-devel libcap-devel
 BuildRequires:  libdb-devel libmnl-devel libselinux-devel pkgconfig git
@@ -82,6 +83,12 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Tue Nov 16 2021 jiangheng <jiangheng12@huawei.com> - 5.5.0-5
+- Type:bugfix
+- Id:NA
+- SUG:NA
+- DESC:fix buffer overflow in lnstat command
+
 * Fri Oct 29 2021 jiangheng <jiangheng12@huawei.com> - 5.5.0-4
 - Type:bugfix
 - Id:NA
