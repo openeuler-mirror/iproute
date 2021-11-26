@@ -21,7 +21,7 @@ diff --git a/ip/ipnetns.c b/ip/ipnetns.c
 index fc58a04..fedc3db 100644
 --- a/ip/ipnetns.c
 +++ b/ip/ipnetns.c
-@@ -24,6 +24,62 @@
+@@ -25,6 +25,62 @@
  #include "namespace.h"
  #include "json_print.h"
  
@@ -84,9 +84,9 @@ index fc58a04..fedc3db 100644
  static int usage(void)
  {
  	fprintf(stderr,
-@@ -589,10 +645,9 @@ static int netns_pids(int argc, char **argv)
+@@ -606,10 +663,9 @@ static int netns_pids(int argc, char **argv)
  			strerror(errno));
- 		return -1;
+ 		goto out;
  	}
 -	dir = opendir("/proc/");
 +	dir = opendir(get_proc_string());
@@ -94,10 +94,10 @@ index fc58a04..fedc3db 100644
 -		fprintf(stderr, "Open of /proc failed: %s\n",
 -			strerror(errno));
 +		fprintf(stderr, "Open of %s failed: %s\n", get_proc_string(), strerror(errno));
- 		return -1;
+ 		goto out;
  	}
  	while ((entry = readdir(dir))) {
-@@ -601,8 +656,7 @@ static int netns_pids(int argc, char **argv)
+@@ -618,8 +674,7 @@ static int netns_pids(int argc, char **argv)
  
  		if (!is_pid(entry->d_name))
  			continue;
@@ -107,7 +107,7 @@ index fc58a04..fedc3db 100644
  		if (stat(pid_net_path, &st) != 0)
  			continue;
  		if ((st.st_dev == netst.st_dev) &&
-@@ -625,7 +679,7 @@ int netns_identify_pid(const char *pidstr, char *name, int len)
+@@ -646,7 +701,7 @@ int netns_identify_pid(const char *pidstr, char *name, int len)
  
  	name[0] = '\0';
  
@@ -116,7 +116,7 @@ index fc58a04..fedc3db 100644
  	netns = open(net_path, O_RDONLY);
  	if (netns < 0) {
  		fprintf(stderr, "Cannot open network namespace: %s\n",
-@@ -856,9 +910,11 @@ static int netns_add(int argc, char **argv, bool create)
+@@ -917,9 +972,11 @@ static int netns_add(int argc, char **argv, bool create)
  	}
  
  	/* Bind the netns last so I can watch for it */
