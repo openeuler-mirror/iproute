@@ -1,6 +1,6 @@
 Name:		iproute
 Version:	5.5.0
-Release:	5
+Release:	6
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -10,6 +10,8 @@ Patch1:         bugfix-iproute2-3.10.0-fix-maddr-show.patch
 Patch2:         bugfix-iproute2-change-proc-to-ipnetnsproc-which-is-private.patch
 Patch3:         backport-bugfix-iproute2-lib-bpf-fix-bpffs-mount-when-sys-fs-bpf-exist.patch 
 Patch4:         backport-bugfix-iproute2-tc-f_flower-fix-port-range-parsing.patch
+Patch5:         backport-tc-flower-Fix-buffer-overflow-on-large-labels.patch
+Patch6:         backport-q_cake-allow-changing-to-diffserv3.patch
 
 Patch9002:	feature-iproute-limit-operation-ip-netns-del.patch
 Patch9003:	feature-iproute-add-support-for-ipvlan-l2e-mode.patch
@@ -83,6 +85,13 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Tue Jan 25 2022 jiangheng <jiangheng12@huawei.com> - 5.5.0-6
+- Type:bugfix
+- Id:NA
+- SUG:NA
+- DESC:tc flowerr Fix buffer overflow on large labels
+       q_cake allow changing to diffserv3
+
 * Tue Nov 16 2021 jiangheng <jiangheng12@huawei.com> - 5.5.0-5
 - Type:bugfix
 - Id:NA
