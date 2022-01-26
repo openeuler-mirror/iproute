@@ -1,7 +1,7 @@
 #needsrootforbuild
 Name:		iproute
 Version:	5.5.0
-Release:	9
+Release:	10
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -19,6 +19,8 @@ Patch9:         backport-lib-bpf_legacy-fix-missing-socket-close-when-connect.pa
 Patch10:        backport-tc-e_bpf-fix-memory-leak-in-parse_bpf.patch
 Patch11:        backport-bugfix-iproute2-lib-bpf-fix-bpffs-mount-when-sys-fs-bpf-exist.patch
 Patch12:        backport-bugfix-iproute2-tc-f_flower-fix-port-range-parsing.patch
+Patch13:        backport-tc-flower-Fix-buffer-overflow-on-large-labels.patch
+Patch14:        backport-q_cake-allow-changing-to-diffserv3.patch
 
 Patch9002:	feature-iproute-limit-operation-ip-netns-del.patch
 Patch9003:	feature-iproute-add-support-for-ipvlan-l2e-mode.patch
@@ -101,6 +103,13 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Tue Jan 25 2022 wuchangsheng <wuchangsheng2@huawei.com> - 5.5.0-10
+- Type:bugfix
+- Id:NA
+- SUG:NA
+- DESC:tc flowerr Fix buffer overflow on large labels
+       q_cake allow changing to diffserv3
+
 * Thu Nov 25 2021 jiangheng <jiangheng12@huawei.com> - 5.5.0-9
 - Type:bugfix
 - Id:NA
