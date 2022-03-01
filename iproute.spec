@@ -1,6 +1,6 @@
 Name:		iproute
 Version:	5.15.0
-Release:	2
+Release:	3
 Summary:	Linux network configuration utilities
 License:	GPLv2+ and Public Domain
 URL:		https://kernel.org/pub/linux/utils/net/iproute2/
@@ -9,7 +9,7 @@ Source0:	https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-%
 Patch1:         bugfix-iproute2-3.10.0-fix-maddr-show.patch         
 Patch2:         bugfix-iproute2-change-proc-to-ipnetnsproc-which-is-private.patch
 
-BuildRequires:	gcc bison elfutils-libelf-devel flex iptables-devel libcap-devel
+BuildRequires:	gcc bison elfutils-libelf-devel flex iptables-devel
 BuildRequires:  libmnl-devel libselinux-devel pkgconfig libbpf-devel
 Requires:       libbpf psmisc
 
@@ -76,6 +76,12 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 %{_mandir}/*
 
 %changelog
+* Tue Mar 01 2022 jiangheng<jiangheng12@huawei.com> - 5.15.0-3
+- Type:bugfix
+- ID:NA
+- SUG:NA
+- DESC: remove libcap-devel dependency
+
 * Mon Feb 21 2021 jiangheng<jiangheng12@huawei.com> - 5.15.0-2
 - Type:bugfix
 - ID:NA
