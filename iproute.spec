@@ -82,7 +82,7 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 - SUG:NA
 - DESC: remove libcap-devel dependency
 
-* Mon Feb 21 2021 jiangheng<jiangheng12@huawei.com> - 5.15.0-2
+* Mon Feb 21 2022 jiangheng<jiangheng12@huawei.com> - 5.15.0-2
 - Type:bugfix
 - ID:NA
 - SUG:NA
@@ -106,7 +106,7 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 - SUG:NA
 - DESC:modify fix of get_tc_lib err
 
-* Tue Sep 24 2020 zhouyihang <zhouyihang3@huawei.com> - 5.7.0-2
+* Thu Sep 24 2020 zhouyihang <zhouyihang3@huawei.com> - 5.7.0-2
 - Type:bugfix
 - Id:NA
 - SUG:NA
