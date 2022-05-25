@@ -144,7 +144,7 @@ install -m 0644 lib/libnetlink.a %{buildroot}%{_libdir}/libnetlink.a
 - SUG:NA
 - DESC:add iproute-help dependency for iproute
 
-* Tue Sep 25 2020 zhouyihang <zhouyihang3@huawei.com> - 5.5.0-2
+* Fri Sep 25 2020 zhouyihang <zhouyihang3@huawei.com> - 5.5.0-2
 - Type:bugfix
 - Id:NA
 - SUG:NA
